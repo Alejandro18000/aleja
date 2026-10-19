@@ -1,0 +1,1215 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap');
+
+:root {
+  --color-aleja-wine: #5c1d2e;
+  --color-aleja-rose: #d67d8d;
+  --color-aleja-rosegold: #e07a5f;
+  --color-aleja-sage: #81b29a;
+  --color-aleja-gold: #f2cc8f;
+  --color-parchment: #fffaf5;
+  --color-parchment-border: #f0ded3;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-script: 'Alex Brush', cursive;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Montserrat', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #3d1622 0%, #17070b 100%);
+  color: #2b2b2b;
+  font-family: var(--font-serif);
+  touch-action: pan-y;
+}
+
+#petals-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.app-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+/* ============================================================
+   ESCENARIO DEL LIBRO 3D
+   ============================================================ */
+.book-stage {
+  width: 100%;
+  height: calc(100% - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+#flipbook {
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+  transition: transform 0.4s ease;
+}
+
+.page {
+  background-color: var(--color-parchment);
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(224, 122, 95, 0.04) 0%, transparent 60%),
+    linear-gradient(to right, rgba(0,0,0,0.05) 0%, transparent 4%, transparent 96%, rgba(0,0,0,0.03) 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.aleja-border {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  border: 1.5px solid var(--color-parchment-border);
+  outline: 1px dashed rgba(224, 122, 95, 0.4);
+  outline-offset: -5px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.page-inner-scroll {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  right: 25px;
+  bottom: 35px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 5px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(224, 122, 95, 0.4) transparent;
+}
+
+.page-inner-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.page-inner-scroll::-webkit-scrollbar-thumb {
+  background: rgba(224, 122, 95, 0.4);
+  border-radius: 4px;
+}
+
+.page-footer-number {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9c6670;
+  letter-spacing: 2px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+}
+
+/* ============================================================
+   PORTADA Y CONTRATAPA ALEJA (VINO & ORO ROSA)
+   ============================================================ */
+.theme-aleja-cover {
+  background: linear-gradient(135deg, #240a12 0%, #441422 40%, #5c1d2e 100%) !important;
+}
+
+.aleja-cover-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 4px solid #20070e;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.85);
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(224, 122, 95, 0.15) 0%, transparent 70%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 6px);
+}
+
+.aleja-cover-bg::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border: 2px solid rgba(224, 122, 95, 0.6);
+  outline: 1px solid rgba(242, 204, 143, 0.3);
+  outline-offset: -6px;
+  pointer-events: none;
+}
+
+.cover-medallion-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+  z-index: 3;
+}
+
+.cover-heart-ring {
+  width: 140px;
+  height: 140px;
+  margin-bottom: -70px;
+  animation: heartPulse 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes heartPulse {
+  from { transform: scale(0.96); filter: drop-shadow(0 0 4px rgba(224, 122, 95, 0.3)); }
+  to { transform: scale(1.04); filter: drop-shadow(0 0 12px rgba(224, 122, 95, 0.7)); }
+}
+
+.aleja-badge {
+  background: rgba(30, 9, 16, 0.88);
+  border: 1.5px solid var(--color-aleja-rosegold);
+  border-radius: 8px;
+  padding: 30px 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(224, 122, 95, 0.25);
+  max-width: 90%;
+  margin-bottom: 25px;
+}
+
+.cover-medical-icon {
+  font-size: 1.1rem;
+  letter-spacing: 6px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.aleja-title {
+  font-family: var(--font-display);
+  font-size: 2.3rem;
+  color: #fff1eb;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 0 15px rgba(224, 122, 95, 0.5);
+}
+
+.aleja-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-aleja-rosegold), transparent);
+  margin: 12px auto;
+}
+
+.cover-gold-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #f7d6dd;
+  font-weight: 400;
+}
+
+.aleja-tagline {
+  font-family: var(--font-script);
+  font-size: 1.55rem;
+  color: var(--color-aleja-rosegold);
+  margin-top: 8px;
+}
+
+.cover-formula-motto {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #ffd6df;
+  margin-top: 15px;
+}
+
+.aleja-btn {
+  background: linear-gradient(135deg, #e07a5f 0%, #a84227 100%) !important;
+  border: 1px solid #ff9f87 !important;
+  color: #fff !important;
+}
+
+.btn-open-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(224, 122, 95, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-open-book:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 25px rgba(224, 122, 95, 0.6);
+}
+
+/* ============================================================
+   ÍNDICE (TOC)
+   ============================================================ */
+.toc-container {
+  padding: 10px 15px;
+}
+
+.editorial-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.editorial-ornament {
+  font-size: 1rem;
+  letter-spacing: 5px;
+}
+
+.editorial-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: #441422;
+  margin: 5px 0;
+  letter-spacing: 1px;
+}
+
+.toc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.toc-item-row {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.toc-item-row:hover {
+  background: rgba(224, 122, 95, 0.12);
+}
+
+.aleja-roman {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: #b04128;
+  min-width: 65px;
+}
+
+.toc-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.toc-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #3d1622;
+}
+
+.toc-desc {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.toc-dots {
+  flex-grow: 1;
+  border-bottom: 1px dotted #e3b8be;
+  margin: 0 10px;
+}
+
+.toc-page-num {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: #9c6670;
+  font-weight: 600;
+}
+
+.toc-quote-footer {
+  margin-top: 30px;
+  text-align: center;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #7a3a48;
+  padding: 10px;
+  border-top: 1px solid #f0ded3;
+}
+
+/* ============================================================
+   PORTADILLA DE CAPÍTULO
+   ============================================================ */
+.chapter-header-screen {
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.editorial-roman {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 3px;
+  margin-bottom: 5px;
+}
+
+.chapter-main-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: #3d1622;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.aleja-sub {
+  font-family: var(--font-script);
+  font-size: 2rem;
+  color: #c94c63;
+  margin-bottom: 15px;
+}
+
+.chapter-poetic-quote {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #4a5568;
+  max-width: 85%;
+  line-height: 1.6;
+  margin: 15px 0 25px 0;
+}
+
+.aleja-badge-pill {
+  display: inline-block;
+  padding: 5px 15px;
+  background: rgba(224, 122, 95, 0.15);
+  border: 1px solid var(--color-aleja-rosegold);
+  border-radius: 20px;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #9c3319;
+}
+
+/* ============================================================
+   ESPACIO RESERVADO CUMPLEAÑOS
+   ============================================================ */
+.upcoming-slot-container {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.slot-motif {
+  font-size: 1.6rem;
+  letter-spacing: 10px;
+  margin-bottom: 15px;
+}
+
+.slot-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: #3d1622;
+}
+
+.slot-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px dashed var(--color-aleja-rosegold);
+  border-radius: 12px;
+  padding: 30px 20px;
+  margin-top: 25px;
+  box-shadow: 0 4px 15px rgba(224, 122, 95, 0.1);
+}
+
+.slot-note {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.08rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.slot-countdown-stamp span {
+  display: inline-block;
+  padding: 8px 18px;
+  background: rgba(224, 122, 95, 0.15);
+  border-radius: 20px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a84227;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   CARTA ANIMADA RECREADA DE ALEJITA
+   ============================================================ */
+.letter-aleja-container {
+  padding: 10px 5px;
+}
+
+/* Línea animada de Electrocardiograma (ECG) */
+.ecg-pulse-wrapper {
+  width: 100%;
+  height: 35px;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.ecg-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ecg-line {
+  fill: none;
+  stroke: var(--color-aleja-rosegold);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: ecgSweep 4s linear infinite;
+}
+
+@keyframes ecgSweep {
+  0% { stroke-dashoffset: 400; }
+  60% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.ecg-dot {
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.6); opacity: 1; }
+}
+
+.illuminated-capital-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.aleja-h {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  background: linear-gradient(135deg, #5c1d2e 0%, #a84227 100%);
+  border: 2px solid var(--color-aleja-rosegold);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(224, 122, 95, 0.35);
+}
+
+.h-mini-icon {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 1rem;
+}
+
+.capital-letter {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  color: #fff1eb;
+  text-shadow: 0 0 10px rgba(255, 200, 200, 0.8);
+}
+
+.letter-salutation {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  color: #3d1622;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.lead-phrase {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #374151;
+  line-height: 1.45;
+}
+
+.letter-body-paragraphs {
+  margin-top: 10px;
+}
+
+.calligraphic-p {
+  font-family: var(--font-serif);
+  font-size: 1.06rem;
+  line-height: 1.65;
+  color: #27272a;
+  margin-bottom: 14px;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.pulse-quote-highlight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 235, 238, 0.7);
+  border: 1px solid #f8b4bc;
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin: 15px auto;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(224, 122, 95, 0.15);
+}
+
+.highlight-text {
+  font-family: var(--font-script);
+  font-size: 1.7rem;
+  color: #a82740;
+}
+
+.heart-beat-icon {
+  animation: pulseBeat 1.4s ease-in-out infinite;
+}
+
+@keyframes pulseBeat {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+}
+
+.friends-hug-badge {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.hug-avatar-duo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #e07a5f;
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(224, 122, 95, 0.15);
+}
+
+.hug-emoji {
+  font-size: 1.5rem;
+}
+
+.hug-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.closing-signoff-box {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.aleja-ribbon {
+  display: inline-block;
+  padding: 8px 24px;
+  background: #fff0f3;
+  border-top: 2px solid #e07a5f;
+  border-bottom: 2px solid #e07a5f;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #5c1d2e;
+}
+
+.aleja-inspect {
+  background: rgba(224, 122, 95, 0.12) !important;
+  border-color: #e07a5f !important;
+  color: #a84227 !important;
+}
+
+.btn-inspect-original {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 15px;
+}
+
+.btn-inspect-original:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   SHOWCASE MASTER ART
+   ============================================================ */
+.showcase-container {
+  padding: 10px 5px;
+  text-align: center;
+}
+
+.showcase-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: #3d1622;
+  margin-bottom: 4px;
+}
+
+.showcase-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: #718096;
+  margin-bottom: 12px;
+}
+
+.aleja-frame {
+  position: relative;
+  border: 2px solid var(--color-aleja-rosegold) !important;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  cursor: zoom-in;
+}
+
+.showcase-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.aleja-hint {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(60, 20, 30, 0.88);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(224, 122, 95, 0.6);
+}
+
+/* ============================================================
+   CAPÍTULOS NAVIDAD & FIN DE AÑO (HOLIDAY CARDS)
+   ============================================================ */
+.holiday-card-container {
+  padding: 15px 10px;
+  text-align: center;
+}
+
+.holiday-motif-top {
+  font-size: 1.3rem;
+  letter-spacing: 10px;
+  margin-bottom: 12px;
+}
+
+.holiday-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  color: #3d1622;
+  margin-bottom: 5px;
+}
+
+.holiday-parchment-sheet {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e07a5f;
+  border-radius: 8px;
+  padding: 20px 15px;
+  box-shadow: inset 0 0 15px rgba(224, 122, 95, 0.1);
+  margin-bottom: 18px;
+}
+
+.holiday-text-content {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #374151;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.aleja-sig {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-script);
+  font-size: 1.5rem;
+  color: #a82740;
+  border-top: 1px dashed #e07a5f;
+  padding-top: 10px;
+}
+
+.aleja-ribbon-pill {
+  display: inline-block;
+  padding: 6px 18px;
+  background: rgba(224, 122, 95, 0.15);
+  border: 1px solid var(--color-aleja-rosegold);
+  border-radius: 20px;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #9c3319;
+}
+
+/* ============================================================
+   EPÍLOGO / PRÓXIMAMENTE
+   ============================================================ */
+.epilogue-upcoming-screen {
+  padding: 50px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.upcoming-ornament {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.upcoming-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: #3d1622;
+  margin-bottom: 5px;
+}
+
+.upcoming-note {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.08rem;
+  line-height: 1.6;
+  color: #4b5563;
+  max-width: 85%;
+  margin-bottom: 25px;
+}
+
+.upcoming-footer-stamp {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+  width: 70%;
+}
+
+/* ============================================================
+   BARRA DE NAVEGACIÓN INFERIOR (DOCK)
+   ============================================================ */
+.bottom-control-bar {
+  height: 60px;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 15px;
+  background: rgba(35, 10, 18, 0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(224, 122, 95, 0.4);
+  border-radius: 16px 16px 0 0;
+  z-index: 10;
+  box-shadow: 0 -8px 25px rgba(0,0,0,0.5);
+}
+
+.nav-btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(224, 122, 95, 0.3);
+  border-radius: 20px;
+  color: #ffd6df;
+  padding: 6px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-btn-action:hover:not(:disabled) {
+  background: rgba(224, 122, 95, 0.25);
+  color: #fff;
+  border-color: var(--color-aleja-rosegold);
+}
+
+.nav-btn-action:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.page-indicator-badge {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: #ffd6df;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.nav-btn-icon {
+  background: none;
+  border: none;
+  color: #ffd6df;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn-icon:hover {
+  color: #fff;
+}
+
+/* ============================================================
+   LIGHTBOX OVERLAY
+   ============================================================ */
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 5, 10, 0.95);
+  backdrop-filter: blur(8px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.lightbox-overlay.active {
+  display: flex;
+}
+
+.lightbox-container {
+  position: relative;
+  max-width: 95%;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 82vh;
+  border: 2px solid var(--color-aleja-rosegold);
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  object-fit: contain;
+}
+
+.lightbox-caption {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #ffd6df;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -40px;
+  right: -10px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2.2rem;
+  cursor: pointer;
+}
+
+/* ============================================================
+   CHAPTERS MODAL
+   ============================================================ */
+.chapters-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 900;
+  padding: 20px;
+}
+
+.chapters-modal-overlay.active {
+  display: flex;
+}
+
+.aleja-modal {
+  background: #fffaf5;
+  border: 2px solid var(--color-aleja-rosegold);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  padding: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e07a5f;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: #3d1622;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.modal-chapter-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: background 0.2s ease;
+}
+
+.modal-chapter-item:hover {
+  background: rgba(224, 122, 95, 0.15);
+}
+
+.modal-ch-roman {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: #a84227;
+  min-width: 65px;
+}
+
+.modal-ch-info {
+  flex-grow: 1;
+}
+
+.modal-ch-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: #3d1622;
+}
+
+.modal-ch-desc {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.modal-ch-page {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #9c6670;
+}
+
+/* ============================================================
+   PRIVATE GATE OVERLAY (PANTALLA DE ACCESO EXCLUSIVO)
+   ============================================================ */
+.private-gate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #3d1622 0%, #17070b 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+  transition: opacity 0.5s ease;
+}
+
+.private-gate-overlay.unlocked-fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.private-gate-card {
+  background: rgba(35, 10, 18, 0.95);
+  border: 2px solid var(--color-aleja-rosegold);
+  border-radius: 16px;
+  padding: 40px 30px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7), inset 0 0 25px rgba(224, 122, 95, 0.2);
+}
+
+.aleja-seal {
+  width: 70px;
+  height: 70px;
+  background: rgba(224, 122, 95, 0.15);
+  border: 2px solid var(--color-aleja-rosegold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 0 20px rgba(224, 122, 95, 0.35);
+}
+
+.private-gate-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: #fff1eb;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.private-gate-divider {
+  width: 50px;
+  height: 2px;
+  background: var(--color-aleja-rosegold);
+  margin: 10px auto 18px auto;
+}
+
+.private-gate-desc {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: #ffd6df;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.private-gate-input-wrapper input {
+  width: 180px;
+  padding: 12px;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 1.8rem;
+  letter-spacing: 12px;
+  color: #fff1eb;
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid var(--color-aleja-rosegold);
+  border-radius: 8px;
+  outline: none;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+  margin-bottom: 18px;
+}
+
+.private-gate-input-wrapper input:focus {
+  border-color: #ff9f87;
+  box-shadow: 0 0 12px rgba(224, 122, 95, 0.5);
+}
+
+.private-gate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 25px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.private-gate-error {
+  color: #ff8585;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  margin-top: 12px;
+  min-height: 18px;
+}
+
+.private-gate-hint {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: #f7a8b8;
+  margin-top: 10px;
+}
+
+.shake {
+  animation: shakeAnim 0.4s ease;
+}
+
+@keyframes shakeAnim {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
