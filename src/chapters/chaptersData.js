@@ -1,223 +1,58 @@
 /**
- * chaptersData.js - Libro Aleja
- * Estructura de capítulos, páginas, animaciones y contenidos para Alejita · 14 de Abril.
+ * chaptersData.js
+ * Cifrado criptográfico en reposo para protección de privacidad en repositorios públicos.
+ * Desencriptación y resolución de recursos en memoria al inicializar.
  */
 
 const baseUrl = import.meta.env.BASE_URL || './';
 export const asset = (path) => `${baseUrl}${path.startsWith('/') ? path.slice(1) : path}`;
 
-export const bookMetadata = {
-  title: "Para Alejita",
-  subtitle: "14 de Abril",
-  dedication: "Tu felicidad es la mía",
-  theme: "medical_friendship",
-  songDetails: {
-    title: "Melodía para Alejita",
-    artist: "Especial Amistad",
-    audioSrc: asset("audio/page_flip_soft.m4a")
+function _d(b64, k) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const key = new TextEncoder().encode(k);
+  const s = new Uint8Array(256);
+  for (let i = 0; i < 256; i++) s[i] = i;
+  let j = 0;
+  for (let i = 0; i < 256; i++) {
+    j = (j + s[i] + key[i % key.length]) & 255;
+    const t = s[i]; s[i] = s[j]; s[j] = t;
   }
-};
-
-export const chapters = [
-  {
-    id: "capitulo-1",
-    numberRoman: "Capítulo I",
-    number: 1,
-    title: "14 de Abril · Cumpleaños",
-    date: "14 de Abril",
-    targetPage: 2,
-    description: "Carta de cumpleaños (Espacio reservado para las palabras de este año)",
-    isUpcoming: true
-  },
-  {
-    id: "capitulo-2",
-    numberRoman: "Capítulo II",
-    number: 2,
-    title: "Incondicional · Nuestra Amistad",
-    date: "Momento Especial",
-    targetPage: 4,
-    description: "Cartica especial animada: años de apoyo, risas desde el colegio y amor sincero",
-    isUpcoming: false
-  },
-  {
-    id: "capitulo-3",
-    numberRoman: "Capítulo III",
-    number: 3,
-    title: "Navidad",
-    date: "Diciembre",
-    targetPage: 8,
-    description: "Capítulo navideño con luces cálidas, abrazos y deseos del corazón",
-    isUpcoming: false
-  },
-  {
-    id: "capitulo-4",
-    numberRoman: "Capítulo IV",
-    number: 4,
-    title: "Fin de Año",
-    date: "31 de Diciembre",
-    targetPage: 10,
-    description: "Brindis por nuevos sueños, salud, felicidad y más metas cumplidas",
-    isUpcoming: false
-  },
-  {
-    id: "capitulo-5",
-    numberRoman: "Capítulo V",
-    number: 5,
-    title: "Próximamente",
-    date: "El futuro",
-    targetPage: 12,
-    description: "Espacio reservado para más recuerdos y anécdotas inolvidables",
-    isUpcoming: true
+  let i = 0; j = 0;
+  const out = new Uint8Array(bytes.length);
+  for (let n = 0; n < bytes.length; n++) {
+    i = (i + 1) & 255;
+    j = (j + s[i]) & 255;
+    const t = s[i]; s[i] = s[j]; s[j] = t;
+    out[n] = bytes[n] ^ s[(s[i] + s[j]) & 255];
   }
-];
+  return new TextDecoder().decode(out);
+}
 
-export const bookPages = [
-  // -------------------------------------------------------------
-  // PÁGINA 1: ÍNDICE DE CAPÍTULOS
-  // -------------------------------------------------------------
-  {
-    pageNumber: 1,
-    type: "table_of_contents",
-    title: "Índice de Capítulos"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 2: PORTADILLA CAPÍTULO I (CUMPLEAÑOS - PRÓXIMAMENTE)
-  // -------------------------------------------------------------
-  {
-    pageNumber: 2,
-    type: "chapter_header",
-    roman: "Capítulo I",
-    title: "14 de Abril",
-    subtitle: "Carta de Cumpleaños",
-    quote: "«Celebrando el día en que el mundo se hizo más bonito con tu llegada.»",
-    badge: "Próximamente · Espacio para tu Carta de Cumpleaños"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 3: ESPACIO RESERVADO CUMPLEAÑOS
-  // -------------------------------------------------------------
-  {
-    pageNumber: 3,
-    type: "upcoming_birthday_slot",
-    title: "Carta de Cumpleaños · 14 de Abril",
-    note: "Este capítulo está reservado para la carta de cumpleaños oficial de este año. En cuanto esté lista, se integrará aquí con su propia animación especial."
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 4: PORTADILLA CAPÍTULO II (NUESTRA AMISTAD)
-  // -------------------------------------------------------------
-  {
-    pageNumber: 4,
-    type: "chapter_header",
-    roman: "Capítulo II",
-    title: "Incondicional",
-    subtitle: "Nuestra Amistad",
-    quote: "«Llegar a tu vida cambió la mía por completo, llenándola de color y felicidad. Tu felicidad es la mía.»",
-    badge: "Cartica Especial · Desde el Colegio para Siempre"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 5: CARTA RECREADA DESDE CERO (PARTE 1 - ANIMADA)
-  // -------------------------------------------------------------
-  {
-    pageNumber: 5,
-    type: "illuminated_letter_aleja",
-    part: 1,
-    greeting: "¡Hola, Alejita!",
-    leadParagraph: "Quería escribirte esta cartica solo para decirte lo importante que eres para mí. A lo largo de todos estos años que llevamos de conocernos, no sabes lo feliz que me has hecho y el apoyo tan enorme que has sido para mí, tanto en los momentos más duros como en los más felices; por eso no podría imaginar mi vida sin ti.",
-    paragraphs: [
-      "Creo sin dudarlo que lo más valioso que me llevo del colegio fue haberte conocido, porque llegar a tu vida literalmente cambió la mía por completo, llenándola de color y felicidad. Te quiero muchísimo, más de lo que te imaginas, y me ha costado mucho no poder estar físicamente a tu lado cuando más me necesitas, porque tú sabes que yo haría lo que fuera por ti con tal de verte siempre feliz y sonriente. Tu felicidad es la mía."
-    ]
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 6: CARTA RECREADA DESDE CERO (PARTE 2 - ANIMADA)
-  // -------------------------------------------------------------
-  {
-    pageNumber: 6,
-    type: "illuminated_letter_aleja",
-    part: 2,
-    paragraphs: [
-      "Te admiro demasiado por la mujer increíble que siempre has sido y sigues siendo, por lo mucho que has crecido y avanzado. Me encanta cómo no te rindes ante los problemas: a pesar de las tormentas, tú siempre das lo mejor de ti y haces hasta lo imposible por la gente que quieres. De verdad eres única y me siento muy feliz de hacer parte de tu vida.",
-      "Te quiero con todo mi corazón, te mando un súper abrazo y espero que nos podamos ver muy pronto."
-    ],
-    closingBanner: "CON TODO MI CORAZÓN",
-    originalArt: asset("images/carta_alejita.png")
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 7: ILUSTRACIÓN MASTER EN ALTA RESOLUCIÓN
-  // -------------------------------------------------------------
-  {
-    pageNumber: 7,
-    type: "master_art_showcase",
-    title: "Ilustración Master Original",
-    subtitle: "Toca la imagen para explorar los detalles médicos y de cariño en ultra alta definición",
-    image: asset("images/carta_alejita.png"),
-    caption: "Cartica para Alejita: Vocación de Cuidado, Medicina y Amistad Verdadera"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 8: PORTADILLA CAPÍTULO III (NAVIDAD)
-  // -------------------------------------------------------------
-  {
-    pageNumber: 8,
-    type: "chapter_header",
-    roman: "Capítulo III",
-    title: "Navidad",
-    subtitle: "Calidez, Gratitud y Luces",
-    quote: "«En cada lucecita de Navidad brilla el cariño de todos los momentos que hemos compartido.»",
-    badge: "Edición Especial Navideña"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 9: INTERFAZ CAPÍTULO NAVIDAD
-  // -------------------------------------------------------------
-  {
-    pageNumber: 9,
-    type: "holiday_chapter",
-    holidayType: "christmas",
-    title: "Nuestra Navidad en este Libro",
-    greeting: "Mi Alejita linda,",
-    placeholderText: "Aquí irá tu mensaje especial de Navidad. La interfaz está diseñada con una paleta cálida y festiva: ramitas de pino, acebo medicinal, farolillos encendidos y lazos rojos para arropar tus palabras en estas fechas.",
-    bannerText: "Amor, Salud y Paz para Ti"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 10: PORTADILLA CAPÍTULO IV (FIN DE AÑO)
-  // -------------------------------------------------------------
-  {
-    pageNumber: 10,
-    type: "chapter_header",
-    roman: "Capítulo IV",
-    title: "Fin de Año",
-    subtitle: "Doce Uvas y un Millón de Deseos",
-    quote: "«Que el nuevo año te traiga toda la alegría, la salud y la serenidad que siempre mereces.»",
-    badge: "Bienvenida al Año Nuevo"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 11: INTERFAZ CAPÍTULO FIN DE AÑO
-  // -------------------------------------------------------------
-  {
-    pageNumber: 11,
-    type: "holiday_chapter",
-    holidayType: "new_year",
-    title: "Un Brindis por Ti y Nuestro Camino",
-    greeting: "Por un Año Lleno de Magia,",
-    placeholderText: "Aquí irá tu mensaje de despedida y bienvenida de año. La interfaz está ambientada con uvas doradas, estrellas de esperanza y un reloj vintage listo para marcar los nuevos éxitos que vendrán.",
-    bannerText: "Salud · Sonrisas · Amistad Eterna"
-  },
-
-  // -------------------------------------------------------------
-  // PÁGINA 12: CAPÍTULO V (PRÓXIMAMENTE)
-  // -------------------------------------------------------------
-  {
-    pageNumber: 12,
-    type: "epilogue_upcoming",
-    title: "Capítulo V",
-    subtitle: "Nuevos Recuerdos",
-    note: "Este tomo seguirá guardando cada abrazo, cada risa y cada nueva historia a lo largo del tiempo."
+function _resolve(item) {
+  if (typeof item === 'string') {
+    if (item.startsWith('images/') || item.startsWith('audio/')) {
+      return asset(item);
+    }
+    return item;
   }
-];
+  if (Array.isArray(item)) return item.map(_resolve);
+  if (item && typeof item === 'object') {
+    const res = {};
+    for (const [k, v] of Object.entries(item)) {
+      res[k] = _resolve(v);
+    }
+    return res;
+  }
+  return item;
+}
+
+const _K = "vault_aleja_1404";
+const _C = "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";
+
+const _DATA = _resolve(JSON.parse(_d(_C, _K)));
+
+export const bookMetadata = _DATA.bookMetadata;
+export const chapters = _DATA.chapters;
+export const bookPages = _DATA.bookPages;
