@@ -1,8 +1,8 @@
 @echo off
-title Libro Aleja - 14 de Abril
+title Libro Interactivo
 echo ========================================================
-echo Iniciando servidor local para el Libro de Alejita...
-echo Abre en tu navegador: http://localhost:3002/?key=1404
+echo Iniciando servidor local...
+echo Abre en tu navegador: http://localhost:3002/
 echo ========================================================
 npm run dev
 pause

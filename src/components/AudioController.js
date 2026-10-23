@@ -1,6 +1,6 @@
 /**
- * AudioController.js - Libro Aleja
- * Control de efectos de paso de página y música de fondo para Alejita.
+ * AudioController.js
+ * Control de efectos de paso de página y audio.
  */
 
 export class AudioController {

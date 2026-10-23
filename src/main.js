@@ -1,6 +1,6 @@
 /**
- * main.js - Libro Aleja
- * Orquestador principal del tomo para Alejita · 14 de Abril.
+ * main.js
+ * Orquestador principal del libro interactivo.
  */
 
 import './styles/book.css';
@@ -14,6 +14,10 @@ import { Lightbox } from './components/Lightbox.js';
 import { ChaptersModal } from './components/ChaptersModal.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (bookMetadata.title) {
+    document.title = `${bookMetadata.title} · ${bookMetadata.subtitle}`;
+  }
+
   // 1. Inicializar efecto afectivo de fondo
   const pulseEffect = new VitalPulseCanvas('petals-canvas');
 

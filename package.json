@@ -1,7 +1,7 @@
 {
   "name": "libro-aleja",
   "version": "1.0.0",
-  "description": "Un libro artesanal e interactivo para Alejita · 14 de Abril",
+  "description": "Interactive 3D Digital Book",
   "main": "index.js",
   "scripts": {
     "dev": "vite",

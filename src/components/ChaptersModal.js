@@ -1,6 +1,6 @@
 /**
- * ChaptersModal.js - Libro Aleja
- * Modal interactivo con el índice de capítulos para Alejita.
+ * ChaptersModal.js
+ * Modal interactivo con el índice de capítulos.
  */
 
 import { chapters } from '../chapters/chaptersData.js';
