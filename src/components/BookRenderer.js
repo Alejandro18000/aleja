@@ -111,13 +111,18 @@ export class BookRenderer {
         innerContent = `<div class="page-content-padding">Página ${data.pageNumber}</div>`;
     }
 
-    page.innerHTML = `
-      <div class="page-parchment-border aleja-border"></div>
-      <div class="page-inner-scroll">
-        ${innerContent}
-      </div>
-      <div class="page-footer-number">— ${data.pageNumber} —</div>
-    `;
+    if (data.type === 'illuminated_letter_aleja' || data.type === 'manuscript_folio') {
+      page.className = 'page page-parchment page-folio-wrapper';
+      page.innerHTML = innerContent;
+    } else {
+      page.innerHTML = `
+        <div class="page-parchment-border aleja-border"></div>
+        <div class="page-inner-scroll">
+          ${innerContent}
+        </div>
+        <div class="page-footer-number">— ${data.pageNumber} —</div>
+      `;
+    }
     return page;
   }
 
@@ -189,96 +194,62 @@ export class BookRenderer {
   }
 
   renderIlluminatedLetterAleja(data) {
-    if (data.part === 1) {
-      return `
-        <div class="letter-aleja-container">
-          <!-- Línea animada de Electrocardiograma (ECG) -->
-          <div class="ecg-pulse-wrapper">
-            <svg class="ecg-svg" viewBox="0 0 300 35" preserveAspectRatio="none">
-              <path class="ecg-line" d="M 0 17 L 70 17 L 80 5 L 90 30 L 100 10 L 110 22 L 115 17 L 300 17"/>
-              <circle class="ecg-dot" cx="100" cy="10" r="3.5" fill="#e07a5f"/>
+    const isLeft = data.part === 1 || data.pageNumber === 5;
+    const imgSrc = isLeft ? 'images/carta_aleja_p5.webp' : 'images/carta_aleja_p6.webp';
+    const fallbackSrc = isLeft ? 'images/carta_aleja_p5.jpg' : 'images/carta_aleja_p6.jpg';
+    const folioTitle = isLeft ? 'Cartica para Alejita · Folio I' : 'Cartica para Alejita · Folio II';
+
+    return `
+      <div class="manuscript-folio-spread ${isLeft ? 'folio-left' : 'folio-right'}">
+        <div class="folio-image-wrapper clean-photo-frame" data-full-img="${asset(data.highres || 'images/carta_alejita.png')}" data-caption="Cartica para Alejita: Vocación de Cuidado, Medicina y Amistad Verdadera (2814 × 1536 px)">
+          <picture>
+            <source srcset="${asset(imgSrc)}" type="image/webp">
+            <img src="${asset(fallbackSrc)}" alt="${folioTitle}" class="manuscript-plate-img" loading="eager" />
+          </picture>
+          
+          <!-- Sombra del lomo (gutter) para realismo tridimensional -->
+          <div class="folio-gutter-shadow ${isLeft ? 'gutter-right' : 'gutter-left'}"></div>
+          
+          <!-- Botón refinado de aumento de manuscrito -->
+          <div class="folio-zoom-hint aleja-zoom-hint" title="Toca para ampliar al 100% en alta resolución">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="11" y1="8" x2="11" y2="14"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
             </svg>
+            <span>Ver HD</span>
           </div>
 
-          <div class="illuminated-spread">
-            <!-- Letra Capitular Iluminada "H" con estetoscopio y amigas -->
-            <div class="illuminated-capital-wrapper">
-              <div class="illuminated-h aleja-h">
-                <span class="capital-letter">H</span>
-                <span class="h-mini-icon">🩺</span>
-              </div>
-              <div class="illuminated-lead-text">
-                <h3 class="letter-salutation">${data.greeting}</h3>
-                <p class="lead-phrase">${data.leadParagraph}</p>
-              </div>
-            </div>
-
-            <div class="letter-body-paragraphs">
-              ${data.paragraphs.map(p => `<p class="calligraphic-p">${p}</p>`).join('')}
-            </div>
-
-            <div class="pulse-quote-highlight">
-              <span class="heart-beat-icon">💓</span>
-              <span class="highlight-text">«Tu felicidad es la mía»</span>
-              <span class="heart-beat-icon">💓</span>
-            </div>
-          </div>
+          <div class="folio-footer-indicator">— ${data.pageNumber} —</div>
         </div>
-      `;
-    } else {
-      return `
-        <div class="letter-aleja-container part-2">
-          <div class="letter-body-paragraphs">
-            ${data.paragraphs.map(p => `<p class="calligraphic-p">${p}</p>`).join('')}
-          </div>
-
-          <!-- Insignia de Amigas Incondicionales -->
-          <div class="friends-hug-badge">
-            <div class="hug-avatar-duo">
-              <span class="hug-emoji">👭</span>
-              <span class="hug-text">Siempre a tu lado en las tormentas y en los días felices</span>
-            </div>
-          </div>
-
-          <div class="closing-signoff-box">
-            <div class="ribbon-banner-parchment aleja-ribbon">
-              ${data.closingBanner}
-            </div>
-          </div>
-
-          <div class="art-lightbox-trigger-row">
-            <button class="btn-inspect-original aleja-inspect clean-photo-frame" data-full-img="${data.originalArt}" data-caption="Manuscrito original">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                <line x1="11" y1="8" x2="11" y2="14"></line>
-                <line x1="8" y1="11" x2="14" y2="11"></line>
-              </svg>
-              <span>Ver cartica original completa en HD</span>
-            </button>
-          </div>
-        </div>
-      `;
-    }
+      </div>
+    `;
   }
 
   renderMasterArtShowcase(data) {
     return `
-      <div class="showcase-container">
+      <div class="showcase-container aleja-showcase">
         <div class="showcase-header">
-          <h3 class="showcase-title">${data.title}</h3>
+          <div class="editorial-ornament">🩺 🌿 🤍</div>
+          <h2 class="showcase-title">${data.title}</h2>
           <p class="showcase-subtitle">${data.subtitle}</p>
         </div>
 
-        <div class="clean-photo-frame showcase-frame aleja-frame" data-full-img="${data.image}" data-caption="${data.caption}">
-          <img src="${data.image}" alt="${data.caption}" class="showcase-img" />
+        <div class="clean-photo-frame showcase-frame aleja-frame" data-full-img="${asset(data.image || 'images/carta_alejita.png')}" data-caption="${data.caption}">
+          <img src="${asset(data.image || 'images/carta_alejita.png')}" alt="${data.caption}" class="showcase-img" />
           <div class="showcase-lens-hint aleja-hint">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <span>Toca para ampliar al 100%</span>
+            <span>Examinar Lámina Completa en HD (2814 × 1536 px)</span>
           </div>
+        </div>
+
+        <div class="showcase-essay-block aleja-essay">
+          <p class="essay-p"><strong>Vocación y Cuidado:</strong> Esta carta ilustrada reúne los símbolos del camino médico y humano de Alejita: el estetoscopio, el ritmo cardíaco, la empatía y la dedicación incansable a los demás.</p>
+          <p class="essay-p"><strong>Amistad Incondicional:</strong> Desde los días compartidos en el colegio hasta hoy, una complicidad forjada en los momentos difíciles y en las mayores alegrías. «Tu felicidad siempre será la mía».</p>
         </div>
       </div>
     `;
